@@ -26,7 +26,7 @@ export default function App() {
             path="/login"
             element={
               <PublicOnly>
-                <div className="container"><Login /></div>
+                <Login />
               </PublicOnly>
             }
           />
@@ -34,7 +34,9 @@ export default function App() {
             path="/dashboard"
             element={
               <Protected>
-                <div className="container"><Dashboard /></div>
+                <div className="container">
+                  <Dashboard />
+                </div>
               </Protected>
             }
           />
