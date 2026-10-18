@@ -1,12 +1,13 @@
 import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 import { supabase } from './supabaseClient'
 
 export default function Login() {
+  const [searchParams] = useSearchParams()
   const [fullName, setFullName] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
-  const [isSignup, setIsSignup] = useState(false)
+  const [isSignup, setIsSignup] = useState(searchParams.get('mode') === 'signup')
   const [error, setError] = useState('')
   const [message, setMessage] = useState('')
   const navigate = useNavigate()

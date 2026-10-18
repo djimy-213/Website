@@ -1,12 +1,13 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { AuthProvider, useAuth } from './AuthContext'
-import Login from './login'
+import Home from './Home'
+import Login from './Login'
 import Dashboard from './Dashboard'
 
 function Protected({ children }) {
   const { user, loading } = useAuth()
   if (loading) return <p>Loading...</p>
-  return user ? children : <Navigate to="/" />
+  return user ? children : <Navigate to="/login" />
 }
 
 function PublicOnly({ children }) {
@@ -20,10 +21,22 @@ export default function App() {
     <AuthProvider>
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<PublicOnly><Login /></PublicOnly>} />
+          <Route path="/" element={<Home />} />
+          <Route
+            path="/login"
+            element={
+              <PublicOnly>
+                <div className="container"><Login /></div>
+              </PublicOnly>
+            }
+          />
           <Route
             path="/dashboard"
-            element={<Protected><Dashboard /></Protected>}
+            element={
+              <Protected>
+                <div className="container"><Dashboard /></div>
+              </Protected>
+            }
           />
           <Route path="*" element={<Navigate to="/" />} />
         </Routes>

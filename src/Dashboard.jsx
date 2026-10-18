@@ -54,7 +54,7 @@ export default function Dashboard() {
 
   const logout = async () => {
     await supabase.auth.signOut()
-    navigate('/')
+    navigate('/login')
   }
 
   return (
