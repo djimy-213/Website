@@ -1,48 +1,47 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { AuthProvider, useAuth } from './AuthContext'
+import { CartProvider } from './CartContext'
+import Layout from './Layout'
 import Home from './Home'
+import Shop from './Shop'
+import Product from './Product'
+import Cart from './Cart'
+import Account from './Account'
+import Admin from './Admin'
 import Login from './Login'
-import Dashboard from './Dashboard'
 
 function Protected({ children }) {
   const { user, loading } = useAuth()
-  if (loading) return <p>Loading...</p>
-  return user ? children : <Navigate to="/login" />
+  if (loading) return <p className="center">Loading...</p>
+  return user ? children : <Navigate to="/login?next=/account" replace />
 }
 
-function PublicOnly({ children }) {
-  const { user, loading } = useAuth()
-  if (loading) return <p>Loading...</p>
-  return user ? <Navigate to="/dashboard" /> : children
+function AdminOnly({ children }) {
+  const { user, profile, loading, isAdmin } = useAuth()
+  if (loading || (user && profile === undefined)) return <p className="center">Loading...</p>
+  if (!user) return <Navigate to="/login?next=/admin" replace />
+  return isAdmin ? children : <Navigate to="/" replace />
 }
 
 export default function App() {
   return (
     <AuthProvider>
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route
-            path="/login"
-            element={
-              <PublicOnly>
-                <Login />
-              </PublicOnly>
-            }
-          />
-          <Route
-            path="/dashboard"
-            element={
-              <Protected>
-                <div className="container">
-                  <Dashboard />
-                </div>
-              </Protected>
-            }
-          />
-          <Route path="*" element={<Navigate to="/" />} />
-        </Routes>
-      </BrowserRouter>
+      <CartProvider>
+        <BrowserRouter>
+          <Routes>
+            <Route path="/login" element={<Login />} />
+            <Route element={<Layout />}>
+              <Route index element={<Home />} />
+              <Route path="shop" element={<Shop />} />
+              <Route path="product/:id" element={<Product />} />
+              <Route path="cart" element={<Cart />} />
+              <Route path="account" element={<Protected><Account /></Protected>} />
+              <Route path="admin" element={<AdminOnly><Admin /></AdminOnly>} />
+            </Route>
+            <Route path="*" element={<Navigate to="/" replace />} />
+          </Routes>
+        </BrowserRouter>
+      </CartProvider>
     </AuthProvider>
   )
 }
