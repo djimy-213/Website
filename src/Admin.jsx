@@ -13,12 +13,29 @@ const EMPTY = {
 }
 const STATUSES = ['pending', 'confirmed', 'shipped', 'delivered', 'cancelled']
 
+async function uploadImage(file) {
+  if (!file.type.startsWith('image/')) throw new Error('Please choose an image file.')
+  if (file.size > 5 * 1024 * 1024) throw new Error('Image is too large (max 5 MB).')
+
+  const ext = file.name.split('.').pop().toLowerCase()
+  const path = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`
+
+  const { error } = await supabase.storage
+    .from('products')
+    .upload(path, file, { cacheControl: '3600', upsert: false })
+  if (error) throw error
+
+  const { data } = supabase.storage.from('products').getPublicUrl(path)
+  return data.publicUrl
+}
+
 export default function Admin() {
   const [tab, setTab] = useState('products')
   const [products, setProducts] = useState([])
   const [orders, setOrders] = useState([])
   const [form, setForm] = useState(EMPTY)
   const [saving, setSaving] = useState(false)
+  const [uploading, setUploading] = useState(false)
   const [error, setError] = useState('')
 
   const set = (k, v) => setForm((f) => ({ ...f, [k]: v }))
@@ -37,6 +54,34 @@ export default function Admin() {
   useEffect(() => {
     load()
   }, [])
+
+  const onPickImage = async (e) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+    setError('')
+    setUploading(true)
+    try {
+      const url = await uploadImage(file)
+      set('image_url', url)
+    } catch (err) {
+      setError(err.message)
+    }
+    setUploading(false)
+    e.target.value = ''
+  }
+
+  const changePhoto = async (id, file) => {
+    if (!file) return
+    setError('')
+    try {
+      const url = await uploadImage(file)
+      const { error } = await supabase.from('products').update({ image_url: url }).eq('id', id)
+      if (error) throw error
+    } catch (err) {
+      setError(err.message)
+    }
+    load()
+  }
 
   const addProduct = async (e) => {
     e.preventDefault()
@@ -113,13 +158,35 @@ export default function Admin() {
               </select>
               <input placeholder="Sizes separated by commas (S, M, L or 40, 41, 42)" value={form.sizes} onChange={(e) => set('sizes', e.target.value)} />
             </div>
-            <input placeholder="Image link (https://...)" value={form.image_url} onChange={(e) => set('image_url', e.target.value)} />
+
+            <div className="upload-box">
+              <div className="upload-preview">
+                {form.image_url ? (
+                  <img src={form.image_url} alt="Preview" />
+                ) : (
+                  <span>{uploading ? 'Uploading...' : 'No photo'}</span>
+                )}
+              </div>
+              <div className="upload-actions">
+                <label className="btn line upload-btn">
+                  {uploading ? 'Uploading...' : form.image_url ? 'Change photo' : 'Upload photo'}
+                  <input type="file" accept="image/*" onChange={onPickImage} disabled={uploading} hidden />
+                </label>
+                {form.image_url && (
+                  <button type="button" className="link-btn" onClick={() => set('image_url', '')}>
+                    Remove photo
+                  </button>
+                )}
+                <small className="muted">JPG, PNG or WEBP, max 5 MB. Tall photos (3:4) look best.</small>
+              </div>
+            </div>
+
             <textarea rows="3" placeholder="Description" value={form.description} onChange={(e) => set('description', e.target.value)} />
             <label className="check">
               <input type="checkbox" checked={form.featured} onChange={(e) => set('featured', e.target.checked)} />
               Show on the home page (featured)
             </label>
-            <button className="btn" disabled={saving}>{saving ? 'Saving...' : 'Add product'}</button>
+            <button className="btn" disabled={saving || uploading}>{saving ? 'Saving...' : 'Add product'}</button>
           </form>
 
           <div className="alist">
@@ -133,6 +200,10 @@ export default function Admin() {
                   <small>{p.category} · {money(p.price)}</small>
                 </div>
                 <div className="abtns">
+                  <label className="mini">
+                    📷 {p.image_url ? 'Change photo' : 'Add photo'}
+                    <input type="file" accept="image/*" hidden onChange={(e) => { changePhoto(p.id, e.target.files?.[0]); e.target.value = '' }} />
+                  </label>
                   <button className={`mini ${p.featured ? 'on' : ''}`} onClick={() => update(p.id, { featured: !p.featured })}>
                     {p.featured ? '★ Featured' : '☆ Feature'}
                   </button>
