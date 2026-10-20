@@ -280,3 +280,7 @@ label.mini { cursor: pointer; display: inline-block; }
   height: 100%;
   transition: width .35s ease, background .35s ease;
 }
+
+/* forgot password link */
+.forgot-link { background: none; border: 0; padding: 0; margin-top: -4px; justify-self: end; color: var(--gold); font-size: 14px; font-weight: 500; }
+.forgot-link:hover { color: var(--ink); text-decoration: underline; }

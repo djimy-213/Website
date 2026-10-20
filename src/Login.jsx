@@ -3,29 +3,13 @@ import { Link, Navigate, useSearchParams } from 'react-router-dom'
 import { supabase } from './supabaseClient'
 import { useAuth } from './AuthContext'
 import { STORE_NAME } from './config'
-
-const RULES = [
-  { id: 'len', label: 'At least 8 characters', test: (p) => p.length >= 8 },
-  { id: 'lower', label: 'A lowercase letter (a-z)', test: (p) => /[a-z]/.test(p) },
-  { id: 'upper', label: 'An uppercase letter (A-Z)', test: (p) => /[A-Z]/.test(p) },
-  { id: 'num', label: 'A number (0-9)', test: (p) => /[0-9]/.test(p) },
-  { id: 'sym', label: 'A special character (. , \\ ! @ # $ ...)', test: (p) => /[^A-Za-z0-9]/.test(p) },
-]
-
-const LEVELS = [
-  { label: 'Too short', color: '#d93025' },
-  { label: 'Very weak', color: '#d93025' },
-  { label: 'Weak', color: '#ef6c00' },
-  { label: 'Fair', color: '#e6b800' },
-  { label: 'Good', color: '#7cb342' },
-  { label: 'Strong', color: '#2e7d32' },
-]
+import { RULES, checkPassword } from './passwordRules'
 
 export default function Login() {
   const [params] = useSearchParams()
   const next = params.get('next') || '/'
   const { user } = useAuth()
-  const [isSignup, setIsSignup] = useState(params.get('mode') === 'signup')
+  const [mode, setMode] = useState(params.get('mode') === 'signup' ? 'signup' : 'login')
   const [fullName, setFullName] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -34,12 +18,17 @@ export default function Login() {
   const [error, setError] = useState('')
   const [message, setMessage] = useState('')
 
-  const results = RULES.map((r) => ({ ...r, ok: r.test(password) }))
-  const score = results.filter((r) => r.ok).length
-  const strong = score === RULES.length
-  const level = password ? LEVELS[score] : { label: '', color: '#e4dccf' }
+  const isSignup = mode === 'signup'
+  const isForgot = mode === 'forgot'
+  const { results, score, strong, level } = checkPassword(password)
 
   if (user) return <Navigate to={next} replace />
+
+  const changeMode = (m) => {
+    setMode(m)
+    setError('')
+    setMessage('')
+  }
 
   const submit = async (e) => {
     e.preventDefault()
@@ -53,7 +42,13 @@ export default function Login() {
 
     setLoading(true)
     try {
-      if (isSignup) {
+      if (isForgot) {
+        const { error } = await supabase.auth.resetPasswordForEmail(email.trim(), {
+          redirectTo: `${window.location.origin}/reset-password`,
+        })
+        if (error) throw error
+        setMessage('If this email has an account, a reset link was sent. Check your inbox and spam folder.')
+      } else if (isSignup) {
         const { data, error } = await supabase.auth.signUp({
           email,
           password,
@@ -72,11 +67,9 @@ export default function Login() {
     }
   }
 
-  const switchMode = () => {
-    setIsSignup(!isSignup)
-    setError('')
-    setMessage('')
-  }
+  const title = isForgot ? 'Forgot password?' : isSignup ? 'Create your account' : 'Log in'
+  const eyebrow = isForgot ? 'Reset' : isSignup ? 'Welcome' : 'Welcome back'
+  const buttonText = isForgot ? 'Send reset link' : isSignup ? 'Create account' : 'Log in'
 
   return (
     <div className="auth">
@@ -94,8 +87,12 @@ export default function Login() {
       <main className="auth-form-wrap">
         <form className="auth-form fade" onSubmit={submit}>
           <Link to="/" className="back">← Back to store</Link>
-          <span className="eyebrow">{isSignup ? 'Welcome' : 'Welcome back'}</span>
-          <h1>{isSignup ? 'Create your account' : 'Log in'}</h1>
+          <span className="eyebrow">{eyebrow}</span>
+          <h1>{title}</h1>
+
+          {isForgot && (
+            <p className="muted">Enter your email and we will send you a link to choose a new password.</p>
+          )}
 
           {isSignup && (
             <input
@@ -114,35 +111,43 @@ export default function Login() {
             required
           />
 
-          <div className="pw-wrap">
-            <input
-              type={showPassword ? 'text' : 'password'}
-              placeholder={isSignup ? 'Create a strong password' : 'Password'}
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              minLength={isSignup ? 8 : 6}
-              required
-            />
-            <button
-              type="button"
-              className="pw-toggle"
-              onClick={() => setShowPassword(!showPassword)}
-            >
-              {showPassword ? 'Hide' : 'Show'}
-            </button>
+          {!isForgot && (
+            <div className="pw-wrap">
+              <input
+                type={showPassword ? 'text' : 'password'}
+                placeholder={isSignup ? 'Create a strong password' : 'Password'}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                minLength={isSignup ? 8 : 6}
+                required
+              />
+              <button
+                type="button"
+                className="pw-toggle"
+                onClick={() => setShowPassword(!showPassword)}
+              >
+                {showPassword ? 'Hide' : 'Show'}
+              </button>
 
-            {isSignup && (
-              <div className="pw-line">
-                <div
-                  className="pw-line-fill"
-                  style={{
-                    width: `${(score / RULES.length) * 100}%`,
-                    background: level.color,
-                  }}
-                ></div>
-              </div>
-            )}
-          </div>
+              {isSignup && (
+                <div className="pw-line">
+                  <div
+                    className="pw-line-fill"
+                    style={{
+                      width: `${(score / RULES.length) * 100}%`,
+                      background: level.color,
+                    }}
+                  ></div>
+                </div>
+              )}
+            </div>
+          )}
+
+          {mode === 'login' && (
+            <button type="button" className="forgot-link" onClick={() => changeMode('forgot')}>
+              Forgot password?
+            </button>
+          )}
 
           {isSignup && (
             <div className="strength">
@@ -163,16 +168,24 @@ export default function Login() {
           )}
 
           <button className="btn full" disabled={loading || (isSignup && !strong)}>
-            {loading ? 'Please wait...' : isSignup ? 'Create account' : 'Log in'}
+            {loading ? 'Please wait...' : buttonText}
           </button>
 
           {error && <p className="error">{error}</p>}
           {message && <p className="success-box">{message}</p>}
 
-          <p className="switch">
-            {isSignup ? 'Already have an account?' : 'New here?'}{' '}
-            <span onClick={switchMode}>{isSignup ? 'Log in' : 'Create an account'}</span>
-          </p>
+          {isForgot ? (
+            <p className="switch">
+              Remembered it? <span onClick={() => changeMode('login')}>Back to log in</span>
+            </p>
+          ) : (
+            <p className="switch">
+              {isSignup ? 'Already have an account?' : 'New here?'}{' '}
+              <span onClick={() => changeMode(isSignup ? 'login' : 'signup')}>
+                {isSignup ? 'Log in' : 'Create an account'}
+              </span>
+            </p>
+          )}
         </form>
       </main>
     </div>

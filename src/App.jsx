@@ -9,6 +9,7 @@ import Cart from './Cart'
 import Account from './Account'
 import Admin from './Admin'
 import Login from './Login'
+import ResetPassword from './ResetPassword'
 
 function Protected({ children }) {
   const { user, loading } = useAuth()
@@ -30,6 +31,7 @@ export default function App() {
         <BrowserRouter>
           <Routes>
             <Route path="/login" element={<Login />} />
+            <Route path="/reset-password" element={<ResetPassword />} />
             <Route element={<Layout />}>
               <Route index element={<Home />} />
               <Route path="shop" element={<Shop />} />
