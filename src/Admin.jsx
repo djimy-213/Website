@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { supabase } from './supabaseClient'
+import { uploadImage } from './uploadImage'
 import { CATEGORIES, money } from './config'
 
 const EMPTY = {
@@ -12,22 +13,6 @@ const EMPTY = {
   featured: false,
 }
 const STATUSES = ['pending', 'confirmed', 'shipped', 'delivered', 'cancelled']
-
-async function uploadImage(file) {
-  if (!file.type.startsWith('image/')) throw new Error('Please choose an image file.')
-  if (file.size > 5 * 1024 * 1024) throw new Error('Image is too large (max 5 MB).')
-
-  const ext = file.name.split('.').pop().toLowerCase()
-  const path = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`
-
-  const { error } = await supabase.storage
-    .from('products')
-    .upload(path, file, { cacheControl: '3600', upsert: false })
-  if (error) throw error
-
-  const { data } = supabase.storage.from('products').getPublicUrl(path)
-  return data.publicUrl
-}
 
 export default function Admin() {
   const [tab, setTab] = useState('products')
@@ -177,7 +162,7 @@ export default function Admin() {
                     Remove photo
                   </button>
                 )}
-                <small className="muted">JPG, PNG or WEBP, max 5 MB. Tall photos (3:4) look best.</small>
+                <small className="muted">JPG, PNG or WEBP. Photos are compressed automatically. Tall photos (3:4) look best.</small>
               </div>
             </div>
 
