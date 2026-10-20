@@ -345,3 +345,13 @@ label.mini { cursor: pointer; display: inline-block; }
   align-content: center;
 }
 .hero-video .hero-text { max-width: 720px; }
+
+.hero-video .hero {
+  grid-template-columns: 1fr;
+  min-height: 82vh;
+  align-content: center;
+  text-align: center;
+}
+.hero-video .hero-text { max-width: 760px; margin: 0 auto; }
+.hero-video .hero-text p { margin-left: auto; margin-right: auto; }
+.hero-video .hero-btns { justify-content: center; }
