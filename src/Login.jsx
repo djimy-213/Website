@@ -4,6 +4,23 @@ import { supabase } from './supabaseClient'
 import { useAuth } from './AuthContext'
 import { STORE_NAME } from './config'
 
+const RULES = [
+  { id: 'len', label: 'At least 8 characters', test: (p) => p.length >= 8 },
+  { id: 'lower', label: 'A lowercase letter (a-z)', test: (p) => /[a-z]/.test(p) },
+  { id: 'upper', label: 'An uppercase letter (A-Z)', test: (p) => /[A-Z]/.test(p) },
+  { id: 'num', label: 'A number (0-9)', test: (p) => /[0-9]/.test(p) },
+  { id: 'sym', label: 'A special character (. , \\ ! @ # $ ...)', test: (p) => /[^A-Za-z0-9]/.test(p) },
+]
+
+const LEVELS = [
+  { label: 'Too short', color: '#d93025' },
+  { label: 'Very weak', color: '#d93025' },
+  { label: 'Weak', color: '#ef6c00' },
+  { label: 'Fair', color: '#e6b800' },
+  { label: 'Good', color: '#7cb342' },
+  { label: 'Strong', color: '#2e7d32' },
+]
+
 export default function Login() {
   const [params] = useSearchParams()
   const next = params.get('next') || '/'
@@ -12,9 +29,15 @@ export default function Login() {
   const [fullName, setFullName] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [showPassword, setShowPassword] = useState(false)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [message, setMessage] = useState('')
+
+  const results = RULES.map((r) => ({ ...r, ok: r.test(password) }))
+  const score = results.filter((r) => r.ok).length
+  const strong = score === RULES.length
+  const level = password ? LEVELS[score] : { label: '', color: '#e4dccf' }
 
   if (user) return <Navigate to={next} replace />
 
@@ -22,6 +45,12 @@ export default function Login() {
     e.preventDefault()
     setError('')
     setMessage('')
+
+    if (isSignup && !strong) {
+      setError('Please choose a stronger password: all the rules below must be green.')
+      return
+    }
+
     setLoading(true)
     try {
       if (isSignup) {
@@ -41,6 +70,12 @@ export default function Login() {
     } finally {
       setLoading(false)
     }
+  }
+
+  const switchMode = () => {
+    setIsSignup(!isSignup)
+    setError('')
+    setMessage('')
   }
 
   return (
@@ -63,12 +98,71 @@ export default function Login() {
           <h1>{isSignup ? 'Create your account' : 'Log in'}</h1>
 
           {isSignup && (
-            <input placeholder="Full name" value={fullName} onChange={(e) => setFullName(e.target.value)} required />
+            <input
+              placeholder="Full name"
+              value={fullName}
+              onChange={(e) => setFullName(e.target.value)}
+              required
+            />
           )}
-          <input type="email" placeholder="Email address" value={email} onChange={(e) => setEmail(e.target.value)} required />
-          <input type="password" placeholder="Password (min 6 characters)" value={password} onChange={(e) => setPassword(e.target.value)} minLength={6} required />
 
-          <button className="btn full" disabled={loading}>
+          <input
+            type="email"
+            placeholder="Email address"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+          />
+
+          <div className="pw-wrap">
+            <input
+              type={showPassword ? 'text' : 'password'}
+              placeholder={isSignup ? 'Create a strong password' : 'Password'}
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              minLength={isSignup ? 8 : 6}
+              required
+            />
+            <button
+              type="button"
+              className="pw-toggle"
+              onClick={() => setShowPassword(!showPassword)}
+            >
+              {showPassword ? 'Hide' : 'Show'}
+            </button>
+
+            {isSignup && (
+              <div className="pw-line">
+                <div
+                  className="pw-line-fill"
+                  style={{
+                    width: `${(score / RULES.length) * 100}%`,
+                    background: level.color,
+                  }}
+                ></div>
+              </div>
+            )}
+          </div>
+
+          {isSignup && (
+            <div className="strength">
+              <div className="strength-head">
+                <span>Password strength</span>
+                <b style={{ color: level.color }}>{level.label}</b>
+              </div>
+
+              <ul className="rules">
+                {results.map((r) => (
+                  <li key={r.id} className={r.ok ? 'ok' : ''}>
+                    <span className="dot">{r.ok ? '✓' : '•'}</span>
+                    {r.label}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+
+          <button className="btn full" disabled={loading || (isSignup && !strong)}>
             {loading ? 'Please wait...' : isSignup ? 'Create account' : 'Log in'}
           </button>
 
@@ -77,9 +171,7 @@ export default function Login() {
 
           <p className="switch">
             {isSignup ? 'Already have an account?' : 'New here?'}{' '}
-            <span onClick={() => { setIsSignup(!isSignup); setError(''); setMessage('') }}>
-              {isSignup ? 'Log in' : 'Create an account'}
-            </span>
+            <span onClick={switchMode}>{isSignup ? 'Log in' : 'Create an account'}</span>
           </p>
         </form>
       </main>
