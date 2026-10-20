@@ -13,10 +13,10 @@ const TILES = [
 ]
 
 const PERKS = [
-  ['🚚', 'Fast delivery', 'To your door in 24 - 72 hours'],
-  ['💵', 'Cash on delivery', 'Pay when you receive your order'],
-  ['🔁', 'Easy exchange', 'Change size within 7 days'],
-  ['✨', 'Quality guaranteed', 'Carefully selected fabrics'],
+  ['Fast delivery', 'To your door in 24 - 72 hours'],
+  ['Cash on delivery', 'Pay when you receive your order'],
+  ['Easy exchange', 'Change size within 7 days'],
+  ['Quality guaranteed', 'Carefully selected fabrics'],
 ]
 
 export default function Home() {
@@ -118,12 +118,12 @@ export default function Home() {
         </div>
       </section>
 
-      {/* PERKS */}
+      {/* PERKS (no emojis) */}
       <section className="perks">
         <div className="wrap perks-grid">
-          {PERKS.map(([icon, title, text]) => (
+          {PERKS.map(([title, text]) => (
             <div key={title}>
-              <span>{icon}</span>
+              <i className="perk-line"></i>
               <h4>{title}</h4>
               <p>{text}</p>
             </div>

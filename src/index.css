@@ -292,3 +292,7 @@ label.mini { cursor: pointer; display: inline-block; }
 
 .or-line { display: flex; align-items: center; gap: 12px; color: var(--muted); font-size: 13px; text-transform: uppercase; letter-spacing: .1em; }
 .or-line::before, .or-line::after { content: ''; flex: 1; height: 1px; background: var(--line); }
+
+/* perks without emojis */
+.perk-line { display: block; width: 38px; height: 2px; background: var(--gold); margin: 0 auto 16px; }
+.perks-grid h4 { margin: 0 0 6px; }
