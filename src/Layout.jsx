@@ -4,6 +4,10 @@ import { useAuth } from './AuthContext'
 import { useCart } from './CartContext'
 import { STORE_NAME, CATEGORIES } from './config'
 
+const PHONE_DISPLAY = '+213 559 64 53 80'
+const PHONE_CALL = '+213559645380'
+const PHONE_WHATSAPP = '213559645380'
+
 export default function Layout() {
   const { user, isAdmin } = useAuth()
   const { count } = useCart()
@@ -63,7 +67,15 @@ export default function Layout() {
           </div>
           <div>
             <h4>Contact</h4>
-            <span>+213 000 00 00 00</span>
+            <a href={`tel:${PHONE_CALL}`} className="phone-link">{PHONE_DISPLAY}</a>
+            <a
+              href={`https://wa.me/${PHONE_WHATSAPP}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="wa-btn"
+            >
+              WhatsApp us
+            </a>
             <span>contact@yourstore.com</span>
             <span>Algiers, Algeria</span>
           </div>

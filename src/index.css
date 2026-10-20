@@ -399,3 +399,9 @@ label.mini { cursor: pointer; display: inline-block; }
   transition: border-color .3s, color .3s;
 }
 .tile.has-img:hover .tile-link { color: #fff; border-color: #fff; }
+
+/* footer phone + WhatsApp */
+.footer .phone-link { color: #fff; font-size: 17px; font-weight: 500; letter-spacing: .02em; }
+.footer .phone-link:hover { color: var(--gold); }
+.footer a.wa-btn { display: inline-block; margin: 4px 0 14px; padding: 9px 18px; background: #25d366; color: #fff; font-size: 13px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; border-radius: 2px; transition: .25s; }
+.footer a.wa-btn:hover { background: #1ebe5b; color: #fff; transform: translateY(-2px); }
