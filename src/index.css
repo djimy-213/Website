@@ -75,8 +75,10 @@ input[type='checkbox'] { width: auto; }
 .hero-video { position: relative; overflow: hidden; background: #1c1b19; color: #fff; }
 .hero-bg { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; filter: blur(7px) brightness(0.9) saturate(1.1); transform: scale(1.1); z-index: 0; }
 .hero-overlay { position: absolute; inset: 0; z-index: 1; background: radial-gradient(circle at 20% 30%, #b08d5733, transparent 55%), linear-gradient(180deg, #1c1b19cc 0%, #1c1b1999 50%, #1c1b19e6 100%); }
-.hero-video .hero { position: relative; z-index: 2; grid-template-columns: 1fr; min-height: 82vh; align-content: center; }
-.hero-video .hero-text { max-width: 720px; }
+.hero-video .hero { position: relative; z-index: 2; grid-template-columns: 1fr; min-height: 82vh; align-content: center; text-align: center; }
+.hero-video .hero-text { max-width: 760px; margin: 0 auto; }
+.hero-video .hero-text p { margin-left: auto; margin-right: auto; }
+.hero-video .hero-btns { justify-content: center; }
 .hero-video .hero h1 { color: #fff; }
 .hero-video .hero h1 em { color: #d4b27a; }
 .hero-video .hero-text p { color: #e6dfd3; }
