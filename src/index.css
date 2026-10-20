@@ -284,3 +284,11 @@ label.mini { cursor: pointer; display: inline-block; }
 /* forgot password link */
 .forgot-link { background: none; border: 0; padding: 0; margin-top: -4px; justify-self: end; color: var(--gold); font-size: 14px; font-weight: 500; }
 .forgot-link:hover { color: var(--ink); text-decoration: underline; }
+
+/* Google button */
+.google-btn { display: flex; align-items: center; justify-content: center; gap: 12px; width: 100%; padding: 13px 16px; background: #fff; border: 1px solid var(--line); border-radius: 2px; font-size: 15px; font-weight: 500; color: var(--ink); transition: .25s; }
+.google-btn:hover { border-color: var(--ink); box-shadow: 0 6px 18px #0001; transform: translateY(-1px); }
+.google-btn:disabled { opacity: .65; cursor: wait; transform: none; }
+
+.or-line { display: flex; align-items: center; gap: 12px; color: var(--muted); font-size: 13px; text-transform: uppercase; letter-spacing: .1em; }
+.or-line::before, .or-line::after { content: ''; flex: 1; height: 1px; background: var(--line); }
