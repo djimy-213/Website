@@ -337,3 +337,11 @@ label.mini { cursor: pointer; display: inline-block; }
 @media (prefers-reduced-motion: reduce) {
   .hero-bg { display: none; }
 }
+
+/* hero without the arch */
+.hero-video .hero {
+  grid-template-columns: 1fr;
+  min-height: 82vh;
+  align-content: center;
+}
+.hero-video .hero-text { max-width: 720px; }

@@ -70,15 +70,6 @@ export default function Home() {
               <Link to="/shop?category=Shoes" className="btn line">Explore shoes</Link>
             </div>
           </div>
-
-          <div className="hero-art fade d2">
-            <div className="arch"></div>
-            <div className="arch-line"></div>
-            <div className="badge-circle">
-              <b>{STORE_NAME}</b>
-              <span>Fashion house</span>
-            </div>
-          </div>
         </div>
       </section>
 
