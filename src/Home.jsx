@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { supabase } from './supabaseClient'
+import { useAuth } from './AuthContext'
 import ProductCard from './ProductCard'
 import { STORE_NAME } from './config'
 
@@ -20,6 +21,7 @@ const PERKS = [
 ]
 
 export default function Home() {
+  const { user, loading: authLoading } = useAuth()
   const [products, setProducts] = useState([])
   const [loading, setLoading] = useState(true)
 
@@ -142,14 +144,16 @@ export default function Home() {
         </div>
       </section>
 
-      {/* CTA */}
-      <section className="wrap section">
-        <div className="cta">
-          <h2>Create your account</h2>
-          <p>Follow your orders and order faster next time.</p>
-          <Link to="/login?mode=signup" className="btn gold">Join {STORE_NAME}</Link>
-        </div>
-      </section>
+      {/* CTA: only for visitors who are not logged in */}
+      {!authLoading && !user && (
+        <section className="wrap section">
+          <div className="cta">
+            <h2>Create your account</h2>
+            <p>Follow your orders and order faster next time.</p>
+            <Link to="/login?mode=signup" className="btn gold">Join {STORE_NAME}</Link>
+          </div>
+        </section>
+      )}
     </>
   )
 }
