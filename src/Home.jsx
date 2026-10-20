@@ -40,29 +40,44 @@ export default function Home() {
 
   return (
     <>
-      {/* HERO */}
-      <section className="hero wrap">
-        <div className="hero-text">
-          <span className="eyebrow fade">New season · {new Date().getFullYear()}</span>
-          <h1 className="fade d1">
-            Dress with <em>elegance</em>,<br />every single day.
-          </h1>
-          <p className="fade d2">
-            Discover clothes and shoes for men, women and kids. Timeless pieces,
-            honest prices, delivered to your door.
-          </p>
-          <div className="hero-btns fade d3">
-            <Link to="/shop" className="btn">Shop the collection</Link>
-            <Link to="/shop?category=Shoes" className="btn line">Explore shoes</Link>
-          </div>
-        </div>
+      {/* HERO WITH BLURRED VIDEO BACKGROUND */}
+      <section className="hero-video">
+        <video
+          className="hero-bg"
+          autoPlay
+          muted
+          loop
+          playsInline
+          preload="auto"
+          poster="/videos/poster.jpg"
+        >
+          <source src="/videos/hero.mp4" type="video/mp4" />
+        </video>
+        <div className="hero-overlay"></div>
 
-        <div className="hero-art fade d2">
-          <div className="arch"></div>
-          <div className="arch-line"></div>
-          <div className="badge-circle">
-            <b>{STORE_NAME}</b>
-            <span>Fashion house</span>
+        <div className="hero wrap">
+          <div className="hero-text">
+            <span className="eyebrow fade">New season · {new Date().getFullYear()}</span>
+            <h1 className="fade d1">
+              Dress with <em>elegance</em>,<br />every single day.
+            </h1>
+            <p className="fade d2">
+              Discover clothes and shoes for men, women and kids. Timeless pieces,
+              honest prices, delivered to your door.
+            </p>
+            <div className="hero-btns fade d3">
+              <Link to="/shop" className="btn gold">Shop the collection</Link>
+              <Link to="/shop?category=Shoes" className="btn line">Explore shoes</Link>
+            </div>
+          </div>
+
+          <div className="hero-art fade d2">
+            <div className="arch"></div>
+            <div className="arch-line"></div>
+            <div className="badge-circle">
+              <b>{STORE_NAME}</b>
+              <span>Fashion house</span>
+            </div>
           </div>
         </div>
       </section>
@@ -118,7 +133,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* PERKS (no emojis) */}
+      {/* PERKS */}
       <section className="perks">
         <div className="wrap perks-grid">
           {PERKS.map(([title, text]) => (

@@ -296,3 +296,44 @@ label.mini { cursor: pointer; display: inline-block; }
 /* perks without emojis */
 .perk-line { display: block; width: 38px; height: 2px; background: var(--gold); margin: 0 auto 16px; }
 .perks-grid h4 { margin: 0 0 6px; }
+
+/* hero with blurred video background */
+.hero-video {
+  position: relative;
+  overflow: hidden;
+  background: #1c1b19;
+  color: #fff;
+}
+.hero-bg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: blur(7px) brightness(0.9) saturate(1.1);
+  transform: scale(1.1); /* hides the soft blurred edges */
+  z-index: 0;
+}
+.hero-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background:
+    radial-gradient(circle at 20% 30%, #b08d5733, transparent 55%),
+    linear-gradient(180deg, #1c1b19cc 0%, #1c1b1999 50%, #1c1b19e6 100%);
+}
+.hero-video .hero {
+  position: relative;
+  z-index: 2;
+}
+.hero-video .hero h1 { color: #fff; }
+.hero-video .hero h1 em { color: #d4b27a; }
+.hero-video .hero-text p { color: #e6dfd3; }
+.hero-video .eyebrow { color: #d4b27a; }
+.hero-video .btn.line { color: #fff; border-color: #ffffffaa; }
+.hero-video .btn.line:hover { background: #fff; color: var(--ink); border-color: #fff; }
+.hero-video .arch { opacity: .9; box-shadow: 0 30px 70px #0008; }
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-bg { display: none; }
+}
