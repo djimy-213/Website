@@ -12,11 +12,18 @@ export default function Layout() {
   const { user, isAdmin } = useAuth()
   const { count } = useCart()
   const [open, setOpen] = useState(false)
+  const [contactOpen, setContactOpen] = useState(false)
   const { pathname } = useLocation()
 
   useEffect(() => {
     window.scrollTo(0, 0)
   }, [pathname])
+
+  useEffect(() => {
+    const onKey = (e) => e.key === 'Escape' && setContactOpen(false)
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [])
 
   const close = () => setOpen(false)
 
@@ -67,21 +74,50 @@ export default function Layout() {
           </div>
           <div>
             <h4>Contact</h4>
-            <a href={`tel:${PHONE_CALL}`} className="phone-link">{PHONE_DISPLAY}</a>
-            <a
-              href={`https://wa.me/${PHONE_WHATSAPP}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="wa-btn"
-            >
-              WhatsApp us
-            </a>
+            <button type="button" className="phone-open" onClick={() => setContactOpen(true)}>
+              {PHONE_DISPLAY}
+            </button>
             <span>contact@yourstore.com</span>
             <span>Algiers, Algeria</span>
           </div>
         </div>
         <div className="copy">© {new Date().getFullYear()} {STORE_NAME}. All rights reserved.</div>
       </footer>
+
+      {/* POPUP: WhatsApp or Call */}
+      {contactOpen && (
+        <div className="contact-overlay" onClick={() => setContactOpen(false)}>
+          <div
+            className="contact-box"
+            role="dialog"
+            aria-modal="true"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <h3>Contact us</h3>
+            <p>{PHONE_DISPLAY}</p>
+
+            <a
+              href={`https://wa.me/${PHONE_WHATSAPP}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="contact-opt wa"
+              onClick={() => setContactOpen(false)}
+            >
+              WhatsApp
+            </a>
+            <a
+              href={`tel:${PHONE_CALL}`}
+              className="contact-opt call"
+              onClick={() => setContactOpen(false)}
+            >
+              Call
+            </a>
+            <button type="button" className="contact-cancel" onClick={() => setContactOpen(false)}>
+              Cancel
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
