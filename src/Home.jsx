@@ -5,11 +5,11 @@ import ProductCard from './ProductCard'
 import { STORE_NAME } from './config'
 
 const TILES = [
-  { name: 'Women', note: 'Dresses, coats & more', cls: 't1' },
-  { name: 'Men', note: 'Suits, shirts & casual', cls: 't2' },
-  { name: 'Kids', note: 'Soft & playful', cls: 't3' },
-  { name: 'Shoes', note: 'For every step', cls: 't4' },
-  { name: 'Accessories', note: 'The finishing touch', cls: 't5' },
+  { name: 'Women', note: 'Dresses, coats & more', cls: 't1', img: '/images/categories/women.jpg' },
+  { name: 'Men', note: 'Suits, shirts & casual', cls: 't2', img: '/images/categories/men.jpg' },
+  { name: 'Kids', note: 'Soft & playful', cls: 't3', img: '/images/categories/kids.jpg' },
+  { name: 'Shoes', note: 'For every step', cls: 't4', img: '/images/categories/shoes.jpg' },
+  { name: 'Accessories', note: 'The finishing touch', cls: 't5', img: '/images/categories/accessories.jpg' },
 ]
 
 const PERKS = [
@@ -83,7 +83,7 @@ export default function Home() {
         </div>
       </div>
 
-      {/* CATEGORIES */}
+      {/* CATEGORIES WITH PHOTO BACKGROUNDS */}
       <section className="wrap section">
         <div className="sec-head">
           <span className="eyebrow">Browse</span>
@@ -91,12 +91,17 @@ export default function Home() {
         </div>
         <div className="tiles">
           {TILES.map((t) => (
-            <Link key={t.name} to={`/shop?category=${t.name}`} className={`tile ${t.cls}`}>
-              <div>
+            <Link
+              key={t.name}
+              to={`/shop?category=${t.name}`}
+              className={`tile has-img ${t.cls}`}
+            >
+              <div className="tile-bg" style={{ backgroundImage: `url(${t.img})` }}></div>
+              <div className="tile-text">
                 <h3>{t.name}</h3>
                 <p>{t.note}</p>
               </div>
-              <span>Shop now →</span>
+              <span className="tile-link">Shop now →</span>
             </Link>
           ))}
         </div>
