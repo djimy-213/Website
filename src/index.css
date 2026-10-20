@@ -282,18 +282,40 @@ label.mini { cursor: pointer; display: inline-block; }
 .footer .phone-open { display: block; margin: 0 0 8px; padding: 0; background: none; border: 0; font: inherit; font-size: 15px; color: inherit; text-align: left; cursor: pointer; transition: color .25s; }
 .footer .phone-open:hover { color: var(--gold); }
 
-/* contact popup: WhatsApp or Call */
-.contact-overlay { position: fixed; inset: 0; z-index: 100; display: flex; align-items: center; justify-content: center; padding: 20px; background: #1c1b19b3; backdrop-filter: blur(4px); animation: fadeIn .2s ease; }
-.contact-box { width: 100%; max-width: 340px; background: #fff; padding: 28px 24px; text-align: center; display: grid; gap: 10px; box-shadow: 0 30px 80px #0006; animation: fadeUp .3s ease both; }
-.contact-box h3 { font-size: 26px; }
-.contact-box p { color: var(--muted); margin-bottom: 8px; }
-.contact-opt { display: block; padding: 14px; text-transform: uppercase; letter-spacing: .14em; font-size: 12.5px; font-weight: 500; color: #fff; transition: .25s; }
-.contact-opt.wa { background: #25d366; }
-.contact-opt.wa:hover { background: #1ebe5b; }
-.contact-opt.call { background: var(--ink); }
-.contact-opt.call:hover { background: var(--gold); }
-.contact-cancel { background: none; border: 0; color: var(--muted); font-size: 14px; padding: 8px; text-decoration: underline; }
-.contact-cancel:hover { color: var(--ink); }
+/* contact popup */
+.contact-overlay { position: fixed; inset: 0; z-index: 100; display: flex; align-items: center; justify-content: center; padding: 20px; background: #1c1b19cc; backdrop-filter: blur(6px); animation: fadeIn .25s ease; }
+.contact-box { position: relative; width: 100%; max-width: 400px; padding: 44px 34px 30px; text-align: center; background: var(--bg); box-shadow: 0 40px 90px #0007; animation: fadeUp .4s ease both; }
+.contact-box::before { content: ''; position: absolute; inset: 10px; border: 1px solid var(--gold); opacity: .55; pointer-events: none; }
+
+.contact-x { position: absolute; top: 18px; right: 20px; z-index: 2; width: 32px; height: 32px; background: none; border: 0; font-size: 28px; line-height: 1; color: var(--muted); transition: .25s; }
+.contact-x:hover { color: var(--ink); transform: rotate(90deg); }
+
+.contact-eyebrow { display: block; color: var(--gold); text-transform: uppercase; letter-spacing: .26em; font-size: 11.5px; font-weight: 500; margin-bottom: 10px; }
+.contact-box h3 { font-size: 34px; }
+.contact-divider { display: block; width: 44px; height: 2px; background: var(--gold); margin: 16px auto; }
+.contact-number { font-family: 'Playfair Display', serif; font-size: 22px; letter-spacing: .04em; margin-bottom: 24px; }
+
+.contact-opt { position: relative; z-index: 2; display: flex; align-items: center; gap: 16px; margin-bottom: 12px; padding: 14px 18px; text-align: left; background: #fff; border: 1px solid var(--line); transition: transform .3s, border-color .3s, box-shadow .3s; }
+.contact-opt:hover { transform: translateY(-3px); border-color: var(--gold); box-shadow: 0 14px 30px #b08d5726; }
+
+.opt-icon { flex: none; width: 46px; height: 46px; display: flex; align-items: center; justify-content: center; border-radius: 50%; transition: .3s; }
+.opt-icon.wa { color: #1f9d55; background: #25d36618; border: 1px solid #25d36655; }
+.opt-icon.call { color: var(--gold); background: #b08d5718; border: 1px solid #b08d5766; }
+.contact-opt:hover .opt-icon.wa { background: #25d366; color: #fff; }
+.contact-opt:hover .opt-icon.call { background: var(--gold); color: #fff; }
+
+.opt-text { flex: 1; display: flex; flex-direction: column; }
+.opt-text b { font-family: 'Playfair Display', serif; font-size: 19px; font-weight: 600; }
+.opt-text small { color: var(--muted); font-size: 13px; }
+.opt-arrow { color: var(--gold); font-size: 20px; transition: transform .3s; }
+.contact-opt:hover .opt-arrow { transform: translateX(5px); }
+
+.contact-hours { position: relative; z-index: 2; margin-top: 14px; color: var(--muted); font-size: 12.5px; letter-spacing: .08em; text-transform: uppercase; }
+
+@media (max-width: 480px) {
+  .contact-box { padding: 40px 22px 26px; }
+  .contact-box h3 { font-size: 30px; }
+}
 
 /* mobile */
 @media (max-width: 900px) {
